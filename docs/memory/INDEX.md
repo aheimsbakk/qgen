@@ -9,3 +9,4 @@
 | QGen tests run on node:test with Playwright as a library | decision | high | testing, node-test, playwright, browser-matrix | | archive/2026-10-05-qgen-test-runner-node-test.md |
 | Matrix phone checks need a flag, not a name suffix | warning | medium | testing, browser-matrix, footgun | | archive/2026-10-05-matrix-phone-flag-not-name.md |
 | Whole-pixel module edges keep generated codes scannable | pattern | high | rendering, canvas, qr-code, scanning | | archive/2026-10-05-integer-module-edges-required.md |
+| Responsive breakpoint is 768 px and duplicated in two stylesheets | warning | medium | responsive, css, breakpoint, drift | | archive/2026-10-05-responsive-breakpoint-768-drift.md |

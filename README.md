@@ -49,12 +49,13 @@ it:
 PLAYWRIGHT_BROWSERS_PATH=/home/opencode/.cache/ms-playwright npm run e2e
 ```
 
-`npm run e2e` runs both the browser scenario suite and the decode round-trip
-suite. To run them separately:
+`npm run e2e` runs the browser scenario suite, the decode round-trip suite, and
+the responsive breakpoint suite. To run them separately:
 
 ```bash
 node --test "e2e/browser.test.js"
 node --test "e2e/decode-round-trip.test.js"
+node --test "e2e/responsive.test.js"
 ```
 
 Run a single browser entry while debugging:

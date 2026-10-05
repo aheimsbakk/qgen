@@ -43,7 +43,7 @@ Status: implemented. Every path listed here exists and is checked by
 │   ├── css/
 │   │   ├── tokens.css                     colour and spacing custom properties
 │   │   ├── base.css                       reset, typography, focus styles
-│   │   ├── layout.css                     shell, panes, tab bar, breakpoints
+│   │   ├── layout.css                     shell, panes, tab bar, breakpoints, export block
 │   │   ├── components.css                 cards, fields, buttons, menu, modal, toast
 │   │   └── states.css                     preview empty, invalid, error states
 │   └── js/
@@ -97,7 +97,8 @@ Status: implemented. Every path listed here exists and is checked by
     │   └── dependency-free.test.js        static proof that src/ loads nothing external
     ├── e2e/
     │   ├── browser.test.js                scenario suite over the browser matrix
-    │   └── decode-round-trip.test.js      rendered PNGs decoded by the independent tool
+    │   ├── decode-round-trip.test.js      rendered PNGs decoded by the independent tool
+    │   └── responsive.test.js             pane switch checked at 767 px and 768 px
     └── tools/
         └── decoder/
             ├── pyproject.toml             pinned decoder tool dependencies
@@ -119,13 +120,14 @@ Test runs write generated dumps and PNGs to `tests/artifacts/`, which is ignored
 | Style panel | `src/index.html`, `src/js/ui/panel-sync.js` |
 | Overlay panel | `src/index.html`, `src/js/ui/panel-sync.js` |
 | Preview panel and states | `src/index.html`, `src/js/ui/preview-states.js`, `src/css/states.css` |
-| Export bar | `src/index.html`, `src/js/core/export-service.js` |
+| Export bar | `src/index.html`, `src/css/layout.css`, `src/js/core/export-service.js` |
 | Menu and About dialog | `src/js/ui/dialogs.js` |
 | Feedback surface | `src/js/ui/toasts.js` |
 | Field error surface | `src/js/ui/form-renderer.js`, `src/css/states.css` |
 | Control bindings | `src/js/ui/bindings.js` |
 | Dialog controller | `src/js/ui/dialogs.js` |
 | View switcher | `src/js/ui/tabs.js` |
+| Responsive pane switch at 768 px | `src/css/layout.css`, `src/css/states.css` |
 | State store | `src/js/core/state-store.js` |
 | Validation and clamp rules | `src/js/core/state-rules.js` |
 | Schema registry | `src/js/core/schema-registry.js` |
@@ -164,6 +166,7 @@ Test runs write generated dumps and PNGs to `tests/artifacts/`, which is ignored
 | Markup | HTML5, no template engine |
 | Runtime dependencies | None. No package manager, no CDN, no bundler |
 | Naming convention | `kebab-case` for files and directories |
+| Responsive breakpoint | 768 px. One pane below it, both panes at and above it |
 | Identifier convention | `camelCase` variables and functions, `PascalCase` classes |
 | Test runner | Node built-in `node:test`, run from `tests/` |
 | Browser driver | Playwright library, pinned `1.63.0` |
@@ -266,6 +269,11 @@ imports a UI module.
   OpenCV headless ships its own wheels and needs no host package.
 - The fixture server uses Node's built-in `http` module so the test harness does
   not gain an extra dependency just to serve files.
+- The 768 px breakpoint is written as a literal in `src/css/layout.css` and
+  repeated in `src/css/states.css`. Plain CSS media queries cannot read a custom
+  property, and a shared value would need a build step, which the delivery rules
+  forbid. `tests/e2e/responsive.test.js` checks both sides of the boundary so the
+  copies cannot drift apart unnoticed.
 
 ---
 
@@ -283,6 +291,7 @@ imports a UI module.
 | Interaction coverage | `tests/e2e/browser.test.js`, `tests/unit/export-service.test.js` |
 | Zero dependency proof | `tests/unit/dependency-free.test.js` |
 | Browser and viewport matrix | `tests/helpers/browser-matrix.js` |
+| Responsive pane switch at 768 px | `tests/e2e/responsive.test.js` |
 
 ---
 

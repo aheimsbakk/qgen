@@ -52,7 +52,7 @@ Each component belongs to exactly one layer. No component mixes layers.
 | Style panel | Shape, dot size, colours, eye-colour inheritance. |
 | Overlay panel | Overlay kind, overlay content input, overlay colours, overlay size. |
 | Preview panel | Image surface plus empty, invalid, and error states. |
-| Export bar | Export size control, save action, copy action. |
+| Export bar | Export size control, save action, copy action. Sits under the image inside the preview pane, because export acts on the previewed code. |
 | Menu and About dialog | Header menu, dropdown, modal dialog. |
 | Feedback surface | Toast area. |
 | Field error surface | Inline error text bound to each field. |
