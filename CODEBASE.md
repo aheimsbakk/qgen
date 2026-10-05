@@ -3,8 +3,8 @@
 Maps the components in `BLUEPRINT.md` to physical files. This document covers
 implementation mapping only. Architectural reasoning lives in `BLUEPRINT.md`.
 
-Status: target layout approved. No application or test file exists yet. The
-verification script listed below is created when the files it checks exist.
+Status: implemented. Every path listed here exists and is checked by
+`scripts/verify_codebase_sync.sh`.
 
 ---
 
@@ -36,7 +36,7 @@ verification script listed below is created when the files it checks exist.
 │   └── memory/                            session decisions and index
 ├── scripts/
 │   ├── bump-version.sh                    raise the version in VERSION
-│   ├── validate-changelog.sh             check CHANGELOG.md against VERSION
+│   ├── validate-changelog.sh              check CHANGELOG.md against VERSION
 │   └── verify_codebase_sync.sh            checks every path listed here exists
 ├── src/                                   delivered application
 │   ├── index.html                         landing page, single page of the app
@@ -50,6 +50,7 @@ verification script listed below is created when the files it checks exist.
 │       ├── main.js                        application bootstrap and wiring
 │       ├── core/
 │       │   ├── state-store.js             sole state owner, clamps, notify
+│       │   ├── state-rules.js             field rules, clamps, enum lists
 │       │   ├── schema-registry.js         8 content types: specs, defaults, rules
 │       │   ├── render-pipeline.js         debounce, sequence guard, validate to render
 │       │   └── export-service.js          high-res render, file save, clipboard
@@ -59,56 +60,53 @@ verification script listed below is created when the files it checks exist.
 │       │   ├── mode-selector.js           numeric, alphanumeric, byte choice
 │       │   ├── version-selector.js        smallest fitting version
 │       │   ├── data-encoder.js            segments, terminator, padding
+│       │   ├── bch.js                     format and version BCH codewords
 │       │   ├── reed-solomon.js            GF(256) arithmetic, block splitting
 │       │   ├── matrix.js                  function patterns and data placement
 │       │   ├── masking.js                 8 masks, penalty rules, selection
 │       │   └── encoder.js                 engine orchestrator, symbol output
 │       ├── render/
+│       │   ├── surface.js                 canvas sizing, integer module edges
 │       │   ├── painter.js                 module shapes, colour mapping
-│       │   ├── overlay.js                 backing plate, emoji, image compositing
-│       │   └── surface.js                 canvas sizing, preview and offscreen
+│       │   └── overlay.js                 backing plate, emoji, image compositing
 │       └── ui/
 │           ├── dom-refs.js                element lookup registry
 │           ├── bindings.js                control events to state commands
 │           ├── form-renderer.js           dynamic field form build
 │           ├── panel-sync.js              control visibility from state
 │           ├── preview-states.js          ready, empty, invalid, error switching
-│           ├── dialogs.js                 menu, About modal, Escape, focus trap
+│           ├── dialogs.js                 menu, About modal, Escape, focus return
 │           ├── tabs.js                    mobile settings and preview switching
 │           └── toasts.js                  transient feedback messages
 └── tests/                                 verification tooling, never shipped
-    ├── package.json                       Playwright Test only, pinned version
-    ├── playwright.config.js               projects, browsers, server, timeouts
-    ├── fixtures/
-    │   ├── reference-vectors.json         published worked examples
-    │   └── expected-grids.json            payload to module grid cases
+    ├── package.json                       node:test plus pinned Playwright library
+    ├── package-lock.json                  locked versions
     ├── helpers/
-    │   ├── png-artifact.js                write exported PNG to disk
-    │   ├── decode-payload.js              call the decoder tool, return payload
-    │   └── request-guard.js              fail the test on any external request
+    │   ├── static-server.js               Node built-in http server for src/
+    │   ├── browser-matrix.js              Firefox and WebKit contexts, desktop and phone
+    │   ├── decoder.js                     bridge to the uv decoder tool
+    │   └── qr-inspect.js                  format and version bit read-back
     ├── unit/
-    │   ├── qr-encoder.spec.js             mode, version, EC, mask stages
-    │   ├── qr-reference-vectors.spec.js   encoder output vs published grids
-    │   ├── schema-registry.spec.js        payload formats and validation rules
-    │   └── state-store.spec.js            clamping, rejection, notification
+    │   ├── bch.test.js                    published BCH worked examples, codeword distance
+    │   ├── reed-solomon.test.js           GF(256) roots and interleaved block counts
+    │   ├── qr-encoder.test.js             mode, version, mask, capacity, function patterns
+    │   ├── schema-registry.test.js        payload formats and validation rules
+    │   ├── state-store.test.js            clamping, rejection, notification
+    │   ├── render-pipeline.test.js        debounce, sequence guard, export payload
+    │   ├── export-service.test.js         clipboard fallback and failure wording
+    │   └── dependency-free.test.js        static proof that src/ loads nothing external
     ├── e2e/
-    │   ├── defaults.spec.js               valid code on load and on type switch
-    │   ├── content-types.spec.js          all 8 types produce expected payloads
-    │   ├── styling.spec.js                shapes, colours, eye colour, dot size
-    │   ├── overlay.spec.js                emoji, image, backing, size ratio
-    │   ├── export.spec.js                 size clamp, save name, clipboard
-    │   ├── errors.spec.js                 required fields, ranges, capacity
-    │   ├── dialogs-a11y.spec.js           menu, modal, Escape, focus behaviour
-    │   ├── responsive.spec.js             pane and tab layout at breakpoints
-    │   ├── decode-roundtrip.spec.js       exported PNG decoded independently
-    │   └── zero-dependency.spec.js        no request leaves the origin
+    │   ├── browser.test.js                scenario suite over the browser matrix
+    │   └── decode-round-trip.test.js      rendered PNGs decoded by the independent tool
     └── tools/
-        ├── static-server.mjs              Node built-in http server for src/
         └── decoder/
             ├── pyproject.toml             pinned decoder tool dependencies
             ├── uv.lock                    locked versions
-            └── decode_qr.py               PNG in, decoded payload JSON out
+            ├── decode_png.py              PNG in, decoded payload JSON out
+            └── matrix_to_png.py           symbol dump in, PNG out
 ```
+
+Test runs write generated dumps and PNGs to `tests/artifacts/`, which is ignored.
 
 ---
 
@@ -129,12 +127,14 @@ verification script listed below is created when the files it checks exist.
 | Dialog controller | `src/js/ui/dialogs.js` |
 | View switcher | `src/js/ui/tabs.js` |
 | State store | `src/js/core/state-store.js` |
+| Validation and clamp rules | `src/js/core/state-rules.js` |
 | Schema registry | `src/js/core/schema-registry.js` |
 | Render pipeline | `src/js/core/render-pipeline.js` |
 | Export service | `src/js/core/export-service.js` |
 | Mode selector | `src/js/qr/mode-selector.js` |
 | Version selector | `src/js/qr/version-selector.js` |
 | Bit stream builder | `src/js/qr/bit-buffer.js`, `src/js/qr/data-encoder.js` |
+| Format and version BCH | `src/js/qr/bch.js` |
 | Error correction coder | `src/js/qr/reed-solomon.js` |
 | Matrix constructor | `src/js/qr/matrix.js` |
 | Mask evaluator | `src/js/qr/masking.js` |
@@ -144,11 +144,11 @@ verification script listed below is created when the files it checks exist.
 | Overlay compositor | `src/js/render/overlay.js` |
 | Surface adapter | `src/js/render/surface.js` |
 | Quiet zone and preview sizing | `src/js/render/surface.js` |
-| End-to-end suite | `tests/e2e/` |
-| Symbol unit suite | `tests/unit/qr-encoder.spec.js`, `tests/unit/qr-reference-vectors.spec.js` |
-| Decode verifier | `tests/tools/decoder/decode_qr.py`, `tests/helpers/decode-payload.js` |
-| Dependency guard | `tests/helpers/request-guard.js`, `tests/e2e/zero-dependency.spec.js` |
-| Test fixture server | `tests/tools/static-server.mjs` |
+| End-to-end suite | `tests/e2e/browser.test.js` |
+| Symbol unit suite | `tests/unit/qr-encoder.test.js`, `tests/unit/bch.test.js`, `tests/unit/reed-solomon.test.js` |
+| Decode verifier | `tests/tools/decoder/decode_png.py`, `tests/helpers/decoder.js` |
+| Dependency guard | `tests/unit/dependency-free.test.js` |
+| Test fixture server | `tests/helpers/static-server.js` |
 | Specification tables | `src/js/qr/tables.js` |
 
 ---
@@ -165,12 +165,14 @@ verification script listed below is created when the files it checks exist.
 | Runtime dependencies | None. No package manager, no CDN, no bundler |
 | Naming convention | `kebab-case` for files and directories |
 | Identifier convention | `camelCase` variables and functions, `PascalCase` classes |
-| Test framework | Playwright Test, pinned `1.63.0` |
+| Test runner | Node built-in `node:test`, run from `tests/` |
+| Browser driver | Playwright library, pinned `1.63.0` |
 | Test manifest | `tests/package.json`, isolated from `src/` |
 | Browser engines in the matrix | Firefox desktop, Firefox at phone viewport, WebKit desktop, WebKit mobile |
 | Chromium | Not part of the required matrix |
-| Mobile profiles | iPhone 14 for WebKit mobile, phone viewport resize for Firefox mobile |
-| Decoder toolchain | Python 3.13 managed by `uv`, pinned `opencv-python-headless`, `numpy`, `Pillow` |
+| Phone profiles | 390 by 844 viewport with `isMobile` and `hasTouch` on both engines |
+| Matrix narrowing | `QGEN_MATRIX=webkit-mobile` limits a run to named entries |
+| Decoder toolchain | Python managed by `uv`, pinned `opencv-python-headless==4.11.0.86`, `numpy` supplied by OpenCV |
 | Fixture server | Node built-in `http` module, no dependency |
 | Version control | Conventional Commits, `docs(sync):` for documentation |
 | CI/CD | None. No `.github` directory |
@@ -178,17 +180,19 @@ verification script listed below is created when the files it checks exist.
 ### File size budget
 
 `BLUEPRINT.md` requires one layer per file. `RULES.md` requires review at 200
-lines and a split at 300 lines. Planned budgets:
+lines and a split at 300 lines. Budgets in force:
 
 | Area | Budget |
 |---|---|
 | `src/js/qr/*` | 60 to 200 lines each |
 | `src/js/core/*` | 80 to 200 lines each |
-| `src/js/ui/*` | 60 to 180 lines each |
-| `src/js/render/*` | 80 to 180 lines each |
-| `src/css/*` | 60 to 200 lines each |
+| `src/js/ui/*` | 60 to 200 lines each |
+| `src/js/render/*` | 60 to 180 lines each |
+| `src/css/*` | 100 to 250 lines each |
+| `src/index.html` | exempt as the page shell |
+| `src/js/main.js` | exempt as the composition root |
 | `src/js/qr/tables.js` | exempt, specification data tables |
-| `tests/**/*.spec.js` | exempt as test suites, kept under 300 lines by splitting files |
+| `tests/**` | exempt as test suites, kept under 300 lines by splitting files |
 
 ---
 
@@ -198,10 +202,11 @@ lines and a split at 300 lines. Planned budgets:
 |---|---|
 | Landing page | `src/index.html` |
 | Application bootstrap | `src/js/main.js`, loaded by `src/index.html` as a module |
-| Symbol engine entry | `src/js/qr/encoder.js`, exports one encode function |
-| Fixture server | `tests/tools/static-server.mjs`, run as `node tests/tools/static-server.mjs` |
-| Playwright configuration | `tests/playwright.config.js` |
-| Decoder command line | `tests/tools/decoder/decode_qr.py`, run as `uv run decode_qr.py <png-path>` |
+| Symbol engine entry | `src/js/qr/encoder.js`, exports `encode`, `capacityFor`, `symbolRows` |
+| Fixture server | `tests/helpers/static-server.js`, started in-process by the end-to-end suite |
+| Unit test command | `node --test "unit/**/*.test.js"`, run in `tests/` |
+| End-to-end test command | `node --test "e2e/**/*.test.js"`, run in `tests/` |
+| Decoder command line | `tests/tools/decoder/decode_png.py`, run as `uv run --project tools/decoder tools/decoder/decode_png.py <png-path>` from `tests/` |
 | Sync verification | `scripts/verify_codebase_sync.sh`, run as `scripts/verify_codebase_sync.sh` |
 | Version bump | `scripts/bump-version.sh`, run as `scripts/bump-version.sh [patch\|minor\|major]` |
 | Changelog check | `scripts/validate-changelog.sh`, run as `scripts/validate-changelog.sh` |
@@ -220,8 +225,8 @@ imports a UI module.
 - ES modules were chosen for explicit imports and no build step. The consequence
   is that `src/index.html` must be served over `http://`. Opening it directly
   from the file system fails module loading in both Firefox and WebKit. Local
-  use therefore runs through `tests/tools/static-server.mjs`, and `README.md`
-  documents that command.
+  use therefore runs through the fixture server in `tests/helpers/static-server.js`,
+  and `README.md` documents that command.
 - No bundler means the browser resolves the import graph. Import order is
   declared in `src/js/main.js` instead of a script list in HTML.
 - Tailwind utility classes from the proof of concept are replaced by semantic
@@ -229,22 +234,33 @@ imports a UI module.
   `src/css/tokens.css` so the palette is defined once.
 - `qrcode-generator` is removed. `src/js/qr/` implements encoding directly, so
   the specification tables in `src/js/qr/tables.js` are the only large data
-  asset in the app.
-- Canvas 2D is the raster surface. Rounded modules use a hand-written path
-  helper rather than the canvas rounded-rectangle method, so behaviour does not
-  depend on engine support differences between Firefox and WebKit.
+  asset in the app. BCH helpers sit in `src/js/qr/bch.js` because `matrix.js`
+  passed its line budget once format and version words were added.
+- Validation rules live in `src/js/core/state-rules.js` so `state-store.js` keeps
+  a single job: owning state and notifying subscribers.
+- Canvas 2D is the raster surface. Module edges are rounded to whole pixels in
+  `src/js/render/surface.js`, because fractional edges produce anti-aliased module
+  borders that scanners reject. Rounded modules use a hand-written path helper
+  rather than the canvas rounded-rectangle method, so behaviour does not depend
+  on engine support differences between Firefox and WebKit.
 - Clipboard export uses the browser clipboard image write API and treats
   unavailability as an expected failure with a message, not an exception path.
 - State is a single object owned by `src/js/core/state-store.js`. UI modules call
   its commands and never assign to state fields, which keeps writes serialised
-  in one module.
+  in one module. Derived writes that must not re-trigger a render, such as the
+  last valid export payload, go through a dedicated store method.
 - The render pipeline carries a sequence number per attempt so a slow encode
   cannot overwrite a newer preview.
-- Playwright Test is used because it drives Firefox and WebKit natively and can
-  attach a request listener for the zero-dependency check. Its version is pinned
-  to `1.63.0` to match the browser builds already installed on this machine.
+- Tests run on Node's built-in test runner. Playwright is used as a library, not
+  as a test framework, because the matrix needs plain Firefox and WebKit
+  contexts rather than Playwright Test projects, and the matrix is data-driven
+  from `tests/helpers/browser-matrix.js`. Its version is pinned to `1.63.0` to
+  match the browser builds already installed on this machine.
 - Test dependencies live in `tests/package.json`. `src/` stays free of any
   manifest, which keeps the delivered artifact dependency-free.
+- The zero-dependency guarantee is proven by a static scan in
+  `tests/unit/dependency-free.test.js` rather than a network listener, because
+  the app contains no request code at all to intercept.
 - The decoder runs in a separate `uv` environment under `tests/tools/decoder/`
   with a lockfile. `pyzbar` is avoided because it needs a system library.
   OpenCV headless ships its own wheels and needs no host package.
@@ -257,29 +273,32 @@ imports a UI module.
 
 | Blueprint verification requirement | Test file |
 |---|---|
-| Symbol correctness against reference vectors | `tests/unit/qr-reference-vectors.spec.js` |
-| Encoder stage behaviour | `tests/unit/qr-encoder.spec.js` |
-| Independent decode round-trip at dot size 1.0 | `tests/e2e/decode-roundtrip.spec.js` |
-| Overlay coverage | `tests/e2e/overlay.spec.js`, `tests/e2e/decode-roundtrip.spec.js` |
-| Content type coverage | `tests/e2e/content-types.spec.js`, `tests/unit/schema-registry.spec.js` |
-| Default-state guarantee | `tests/e2e/defaults.spec.js` |
-| Error boundaries | `tests/e2e/errors.spec.js` |
-| Interaction coverage | `tests/e2e/export.spec.js`, `tests/e2e/dialogs-a11y.spec.js` |
-| Zero dependency proof | `tests/e2e/zero-dependency.spec.js` |
-| Browser and viewport matrix | `tests/playwright.config.js` projects |
+| Published BCH worked examples | `tests/unit/bch.test.js` |
+| Encoder stage behaviour | `tests/unit/qr-encoder.test.js`, `tests/unit/reed-solomon.test.js` |
+| Independent decode round-trip at dot size 1.0 | `tests/e2e/decode-round-trip.test.js` |
+| Overlay coverage | `tests/e2e/browser.test.js`, `tests/e2e/decode-round-trip.test.js` |
+| Content type coverage | `tests/e2e/decode-round-trip.test.js`, `tests/unit/schema-registry.test.js` |
+| Default-state guarantee | `tests/e2e/browser.test.js` |
+| Error boundaries | `tests/e2e/browser.test.js`, `tests/unit/qr-encoder.test.js`, `tests/unit/state-store.test.js` |
+| Interaction coverage | `tests/e2e/browser.test.js`, `tests/unit/export-service.test.js` |
+| Zero dependency proof | `tests/unit/dependency-free.test.js` |
+| Browser and viewport matrix | `tests/helpers/browser-matrix.js` |
 
 ---
 
 ## 8. Ignored Paths
 
-Added to `.gitignore` when the tooling is created:
+Declared in `.gitignore`:
 
 ```
+tmp
 node_modules/
-tests/artifacts/
 test-results/
 playwright-report/
+tests/artifacts/
 .venv/
 __pycache__/
 *.pyc
+.env
+.qa-error.log
 ```

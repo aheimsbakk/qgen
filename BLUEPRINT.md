@@ -250,8 +250,8 @@ The standard fixes the maximum. A single version 40 symbol carries at most:
 
 | Mode | Maximum payload at level L | Maximum payload at level H |
 |---|---|---|
-| Numeric | 7117 characters | 3057 characters |
-| Alphanumeric | 4296 characters | 1842 characters |
+| Numeric | 7089 characters | 3057 characters |
+| Alphanumeric | 4296 characters | 1852 characters |
 | Byte (UTF-8) | 2953 bytes | 1273 bytes |
 
 The limit cannot be extended inside one QR code. Larger content requires either
