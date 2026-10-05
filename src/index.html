@@ -27,8 +27,8 @@
 </header>
 
 <div class="tab-strip" role="tablist" aria-label="Panel">
-  <button type="button" id="tabSettingsButton" class="tab" role="tab" aria-selected="true">Settings</button>
-  <button type="button" id="tabPreviewButton" class="tab" role="tab" aria-selected="false">Preview</button>
+  <button type="button" id="tabSettingsButton" class="tab is-active" role="tab" aria-selected="true">Settings</button>
+  <button type="button" id="tabPreviewButton" class="tab" role="tab" aria-selected="false">Preview &amp; Export</button>
 </div>
 
 <main id="mainLayout" class="layout" data-view="settings">
@@ -130,23 +130,6 @@
         </div>
       </div>
     </div>
-
-    <h2 class="section-title">Export</h2>
-
-    <div class="field">
-      <label for="exportSizeInput">Image size</label>
-      <select id="exportSizeInput" class="field-control">
-        <option value="256">256 pixels</option>
-        <option value="512">512 pixels</option>
-        <option value="1024" selected>1024 pixels</option>
-        <option value="2048">2048 pixels</option>
-      </select>
-    </div>
-
-    <div class="button-row">
-      <button type="button" id="saveButton" class="button button-primary">Save PNG</button>
-      <button type="button" id="copyButton" class="button button-quiet">Copy image</button>
-    </div>
   </section>
 
   <section class="panel panel-preview" aria-labelledby="previewHeading">
@@ -166,6 +149,25 @@
 
     <p id="symbolInfo" class="preview-info"></p>
     <p id="previewStatus" class="visually-hidden" role="status" aria-live="polite"></p>
+
+    <div class="export-block">
+      <h2 class="section-title">Export</h2>
+
+      <div class="field">
+        <label for="exportSizeInput">Image size</label>
+        <select id="exportSizeInput" class="field-control">
+          <option value="256">256 pixels</option>
+          <option value="512">512 pixels</option>
+          <option value="1024" selected>1024 pixels</option>
+          <option value="2048">2048 pixels</option>
+        </select>
+      </div>
+
+      <div class="button-row">
+        <button type="button" id="saveButton" class="button button-primary">Save PNG</button>
+        <button type="button" id="copyButton" class="button button-quiet">Copy image</button>
+      </div>
+    </div>
   </section>
 </main>
 

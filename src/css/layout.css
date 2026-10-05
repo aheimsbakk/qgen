@@ -19,10 +19,12 @@
   position: relative;
 }
 
+/* The strip adds no bottom padding: the layout's own 16 px top padding is the
+   gap below the tabs, so the space above and below them stays equal. */
 .tab-strip {
   display: flex;
   gap: var(--space-2);
-  padding: var(--space-3) var(--space-4) 0;
+  padding: var(--space-4) var(--space-4) 0;
 }
 
 .layout {
@@ -50,8 +52,21 @@
   font-size: var(--font-size-large);
 }
 
-/* Below 720 px only one panel shows, chosen by the tab strip. */
-@media (max-width: 720px) {
+/* Export belongs to the previewed image, so it sits below the preview. The
+   gap matches the section spacing in the settings pane, and no divider line is
+   drawn: the rest of the page separates groups by space alone. */
+.export-block {
+  margin-top: var(--space-5);
+}
+
+.export-block .section-title {
+  margin-top: 0;
+}
+
+/* Below 768 px only one panel shows, chosen by the tab strip. The breakpoint
+   value is fixed by BLUEPRINT.md section 11 and repeated in states.css,
+   because plain CSS media queries cannot read a custom property. */
+@media (max-width: 767px) {
   .layout[data-view="settings"] .panel-preview {
     display: none;
   }
@@ -61,8 +76,8 @@
   }
 }
 
-/* Desktop shows both panels and hides the tab strip. */
-@media (min-width: 721px) {
+/* At 768 px and above both panels show and the tab strip is hidden. */
+@media (min-width: 768px) {
   .tab-strip {
     display: none;
   }
@@ -75,5 +90,9 @@
   .panel-preview {
     position: sticky;
     top: var(--space-4);
+    /* The export block pushes the panel past the height of a short desktop
+       window. Without the cap, the sticky panel hides its own controls. */
+    max-height: calc(100vh - 2 * var(--space-4));
+    overflow-y: auto;
   }
 }

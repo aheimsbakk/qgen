@@ -1,5 +1,45 @@
 # Changelog
 
+## [0.3.0] - 2026-10-05
+
+- **why:** Put export next to the code it exports, and make the layout match the blueprint
+- **model:** kompis/qwen3.8-flash-next-iq3_xxs
+- **tags:** qgen, layout, responsive, export, testing
+
+### Added
+
+- `tests/e2e/responsive.test.js`: four checks that open the page at 767 px and
+  768 px in Firefox and WebKit and assert which panes and the tab strip show.
+  Nothing guarded the breakpoint before, which is how it drifted to 720 px.
+- `src/css/layout.css`: the sticky preview panel gets `max-height` and
+  `overflow-y: auto` on desktop. The export controls made the panel taller than
+  a short window, and a sticky panel hid its own buttons.
+- `docs/memory/`: recorded that the 768 px value is written twice in CSS and
+  must change in both places.
+
+### Changed
+
+- `src/index.html`: the Export group moved from the settings pane to the preview
+  pane, below the image. The mobile tab is now "Preview & Export". Control ids
+  are unchanged, so `bindings.js` and `export-service.js` needed no edit.
+- `src/css/layout.css` and `src/css/states.css`: the pane switch now happens at
+  768 px, the value `BLUEPRINT.md` section 11 states. It was 720 px. Viewports
+  between 721 and 767 px now get the single-pane layout.
+- `src/css/components.css` and `src/css/states.css`: the Settings and Preview &
+  Export tabs look like buttons. Full border, full radius, and a filled accent
+  for the selected tab, matching `.button-primary`.
+- `src/css/layout.css`: the tab strip keeps 16 px above and below the tabs, and
+  the divider line above the Export heading is gone. Groups are separated by
+  space alone, as elsewhere on the page.
+
+### Fixed
+
+- `src/index.html`: the Settings tab starts with the `is-active` class, so the
+  selected tab no longer fades in from white over 120 ms on load.
+- `tests/e2e/browser.test.js`: the save and copy scenarios switch to the preview
+  pane first. On phone viewports the export buttons now live in a hidden pane,
+  and the click timed out.
+
 ## [0.2.0] - 2026-10-05
 
 - **why:** Deliver the QR generator the v0.1 blueprint describes

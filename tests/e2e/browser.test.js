@@ -174,7 +174,11 @@ const SCENARIOS = [
   },
   {
     name: 'export saves a PNG file',
-    async run(page) {
+    async run(page, session) {
+      // Export controls live in the preview panel, which phone viewports hide
+      // until the Preview & Export tab is selected.
+      await showPreview(session, page);
+
       const downloadPromise = page.waitForEvent('download', { timeout: 15000 });
       await page.click('#saveButton');
       const download = await downloadPromise;
@@ -189,7 +193,8 @@ const SCENARIOS = [
   },
   {
     name: 'copy writes the PNG to the clipboard',
-    async run(page) {
+    async run(page, session) {
+      await showPreview(session, page);
       await page.click('#copyButton');
 
       await page.waitForFunction(

@@ -70,13 +70,21 @@
   border-color: var(--color-danger);
 }
 
+/* The selected tab takes the filled look of the primary button, so the
+   choice reads as pressed rather than as an open folder tab. */
 .tab.is-active {
-  background: var(--color-surface);
+  background: var(--color-accent);
   border-color: var(--color-accent);
-  color: var(--color-accent-strong);
+  color: #ffffff;
 }
 
-@media (max-width: 720px) {
+.tab.is-active:hover {
+  background: var(--color-accent-strong);
+  border-color: var(--color-accent-strong);
+}
+
+/* Same 768 px breakpoint as layout.css. */
+@media (max-width: 767px) {
   .layout[data-view="preview"] .preview-canvas {
     justify-content: center;
   }
@@ -99,6 +107,7 @@
   .app-header,
   .tab-strip,
   .panel-settings,
+  .export-block,
   .toast-region {
     display: none;
   }

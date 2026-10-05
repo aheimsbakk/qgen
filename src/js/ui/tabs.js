@@ -1,8 +1,8 @@
 /**
- * Mobile view switching: Settings and Preview tabs.
+ * Mobile view switching: Settings and Preview & Export tabs.
  *
  * Desktop CSS shows both panels at once, so the tabs only matter below the
- * 720 px breakpoint.
+ * 768 px breakpoint.
  */
 
 /** Tab strip controller for the mobile layout. */
