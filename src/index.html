@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QGen — QR code generator</title>
+<meta name="description" content="Create a QR code in a browser and save it as a PNG image.">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/states.css">
+</head>
+<body>
+<a class="skip-link" href="#settings-panel">Skip to the settings</a>
+
+<header class="app-header">
+  <p class="app-name">QGen</p>
+  <div class="header-actions">
+    <button type="button" id="menuButton" class="button button-quiet" aria-expanded="false" aria-haspopup="true" aria-controls="menuDropdown">
+      Menu
+    </button>
+    <div id="menuDropdown" class="menu-dropdown" role="menu" hidden>
+      <button type="button" id="aboutMenuItem" class="menu-item" role="menuitem">About QGen</button>
+    </div>
+  </div>
+</header>
+
+<div class="tab-strip" role="tablist" aria-label="Panel">
+  <button type="button" id="tabSettingsButton" class="tab" role="tab" aria-selected="true">Settings</button>
+  <button type="button" id="tabPreviewButton" class="tab" role="tab" aria-selected="false">Preview</button>
+</div>
+
+<main id="mainLayout" class="layout" data-view="settings">
+  <section id="settings-panel" class="panel panel-settings" aria-labelledby="settingsHeading">
+    <h1 id="settingsHeading" class="panel-title">Create a QR code</h1>
+
+    <div class="field">
+      <label for="schemaTypeSelect">Content type</label>
+      <select id="schemaTypeSelect" class="field-control">
+        <option value="url">Website link</option>
+        <option value="text">Plain text</option>
+        <option value="wifi">Wi-Fi network</option>
+        <option value="contact">Contact card</option>
+        <option value="email">Email message</option>
+        <option value="phone">Phone number</option>
+        <option value="sms">Text message</option>
+        <option value="geo">Map location</option>
+      </select>
+    </div>
+
+    <div id="dynamicFormContainer" class="field-stack"></div>
+
+    <h2 class="section-title">Style</h2>
+
+    <div class="field">
+      <label for="moduleShapeSelect">Module shape</label>
+      <select id="moduleShapeSelect" class="field-control">
+        <option value="square">Square</option>
+        <option value="rounded">Rounded</option>
+        <option value="dots">Dots</option>
+        <option value="v_bars">Vertical bars</option>
+        <option value="h_bars">Horizontal bars</option>
+      </select>
+    </div>
+
+    <div class="field" id="dotScaleField">
+      <label for="dotScaleInput">Module size <output id="dotScaleValue" for="dotScaleInput">1.00</output></label>
+      <input id="dotScaleInput" class="field-control" type="range" min="0.1" max="1" step="0.05" value="1">
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="colorFgInput">Code colour</label>
+        <input id="colorFgInput" class="field-control field-control-color" type="color" value="#000000">
+      </div>
+      <div class="field">
+        <label for="colorBgInput">Background colour</label>
+        <input id="colorBgInput" class="field-control field-control-color" type="color" value="#ffffff">
+      </div>
+      <div class="field" id="colorEyeField">
+        <label for="colorEyeInput">Corner colour</label>
+        <input id="colorEyeInput" class="field-control field-control-color" type="color" value="#000000">
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="inheritFgInput">Use the code colour for the corners</label>
+      <input id="inheritFgInput" class="field-checkbox" type="checkbox" checked>
+    </div>
+
+    <h2 class="section-title">Centre image</h2>
+
+    <div class="field">
+      <label for="overlayKindSelect">Centre image</label>
+      <select id="overlayKindSelect" class="field-control">
+        <option value="none">None</option>
+        <option value="emoji">Emoji or symbol</option>
+        <option value="image">Uploaded image</option>
+      </select>
+    </div>
+
+    <div class="field" id="overlayEmojiField" hidden>
+      <label for="overlayEmojiInput">Symbol</label>
+      <input id="overlayEmojiInput" class="field-control" type="text" maxlength="4" placeholder="For example: +">
+    </div>
+
+    <div class="field" id="overlayImageField" hidden>
+      <label for="overlayImageInput">Upload an image</label>
+      <input id="overlayImageInput" class="field-control" type="file" accept="image/png,image/jpeg,image/webp">
+    </div>
+
+    <div id="overlaySharedField" class="field-stack" hidden>
+      <div class="field">
+        <label for="overlaySizeInput">Centre size <output id="overlaySizeValue" for="overlaySizeInput">20%</output></label>
+        <input id="overlaySizeInput" class="field-control" type="range" min="0.1" max="0.35" step="0.05" value="0.2">
+      </div>
+      <div class="field" id="overlayTextColorField">
+        <label for="overlayTextColorInput">Symbol colour</label>
+        <input id="overlayTextColorInput" class="field-control field-control-color" type="color" value="#000000">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="overlayBackingColorInput">Plate colour</label>
+          <input id="overlayBackingColorInput" class="field-control field-control-color" type="color" value="#ffffff">
+        </div>
+        <div class="field">
+          <label for="overlayTransparentInput">No plate</label>
+          <input id="overlayTransparentInput" class="field-checkbox" type="checkbox">
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Export</h2>
+
+    <div class="field">
+      <label for="exportSizeInput">Image size</label>
+      <select id="exportSizeInput" class="field-control">
+        <option value="256">256 pixels</option>
+        <option value="512">512 pixels</option>
+        <option value="1024" selected>1024 pixels</option>
+        <option value="2048">2048 pixels</option>
+      </select>
+    </div>
+
+    <div class="button-row">
+      <button type="button" id="saveButton" class="button button-primary">Save PNG</button>
+      <button type="button" id="copyButton" class="button button-quiet">Copy image</button>
+    </div>
+  </section>
+
+  <section class="panel panel-preview" aria-labelledby="previewHeading">
+    <h2 id="previewHeading" class="panel-title">Preview</h2>
+
+    <div id="canvasContainer" class="preview-canvas">
+      <canvas id="qrCanvas" width="512" height="512" aria-label="QR code preview"></canvas>
+    </div>
+
+    <p id="qrEmptyState" class="preview-placeholder" hidden>
+      No QR code yet. Fill in the required fields.
+    </p>
+
+    <div id="qrErrorState" class="preview-error" role="alert" hidden>
+      <p id="qrErrorText"></p>
+    </div>
+
+    <p id="symbolInfo" class="preview-info"></p>
+    <p id="previewStatus" class="visually-hidden" role="status" aria-live="polite"></p>
+  </section>
+</main>
+
+<div id="toastRegion" class="toast-region" role="status" aria-live="polite"></div>
+
+<div id="aboutDialog" class="dialog" role="dialog" aria-modal="true" aria-labelledby="aboutHeading" hidden>
+  <div id="aboutBackdrop" class="dialog-backdrop"></div>
+  <div id="aboutDialogPanel" class="dialog-panel">
+    <h2 id="aboutHeading" class="dialog-title">About QGen</h2>
+    <p class="dialog-body">
+      QGen creates QR codes in your browser. Nothing is sent to a server, and
+      nothing is stored after you close the page.
+    </p>
+    <p class="dialog-body">
+      Created by Arnulf Heimsbakk.
+      <a href="https://sanntid.org" rel="noopener">sanntid.org</a>
+    </p>
+    <button type="button" id="aboutCloseButton" class="button button-primary">Close</button>
+  </div>
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

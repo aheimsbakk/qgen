@@ -1,0 +1,14 @@
+{
+  "name": "qgen-tests",
+  "private": true,
+  "type": "module",
+  "description": "Test tooling for QGen. Application code in src/ stays dependency-free.",
+  "scripts": {
+    "test": "node --test \"unit/**/*.test.js\"",
+    "unit": "node --test \"unit/**/*.test.js\"",
+    "e2e": "node --test \"e2e/**/*.test.js\""
+  },
+  "dependencies": {
+    "playwright": "1.63.0"
+  }
+}

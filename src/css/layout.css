@@ -1,0 +1,79 @@
+/* Page frame: header, tab strip, and the two-panel layout. */
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.app-name {
+  font-size: var(--font-size-large);
+  font-weight: 700;
+}
+
+.header-actions {
+  position: relative;
+}
+
+.tab-strip {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4) 0;
+}
+
+.layout {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-4);
+}
+
+.panel {
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow-panel);
+}
+
+.panel-title {
+  margin-bottom: var(--space-4);
+  font-size: var(--font-size-title);
+}
+
+.section-title {
+  margin-top: var(--space-5);
+  margin-bottom: var(--space-3);
+  font-size: var(--font-size-large);
+}
+
+/* Below 720 px only one panel shows, chosen by the tab strip. */
+@media (max-width: 720px) {
+  .layout[data-view="settings"] .panel-preview {
+    display: none;
+  }
+
+  .layout[data-view="preview"] .panel-settings {
+    display: none;
+  }
+}
+
+/* Desktop shows both panels and hides the tab strip. */
+@media (min-width: 721px) {
+  .tab-strip {
+    display: none;
+  }
+
+  .layout {
+    grid-template-columns: minmax(320px, 460px) minmax(320px, 1fr);
+    align-items: start;
+  }
+
+  .panel-preview {
+    position: sticky;
+    top: var(--space-4);
+  }
+}
