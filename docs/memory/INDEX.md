@@ -10,3 +10,5 @@
 | Matrix phone checks need a flag, not a name suffix | warning | medium | testing, browser-matrix, footgun | | archive/2026-10-05-matrix-phone-flag-not-name.md |
 | Whole-pixel module edges keep generated codes scannable | pattern | high | rendering, canvas, qr-code, scanning | | archive/2026-10-05-integer-module-edges-required.md |
 | Responsive breakpoint is 768 px and duplicated in two stylesheets | warning | medium | responsive, css, breakpoint, drift | | archive/2026-10-05-responsive-breakpoint-768-drift.md |
+| Render pipeline runs one attempt at a time, no sequence guard | decision | medium | qgen, render-pipeline, ordering, synchronous | | archive/2026-10-05-render-pipeline-one-attempt.md |
+| Range slider step must match the blueprint state tree | warning | medium | qgen, range-input, html, blueprint-drift | | archive/2026-10-05-range-step-must-match-blueprint.md |

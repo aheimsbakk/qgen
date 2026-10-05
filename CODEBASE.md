@@ -52,7 +52,7 @@ Status: implemented. Every path listed here exists and is checked by
 │       │   ├── state-store.js             sole state owner, clamps, notify
 │       │   ├── state-rules.js             field rules, clamps, enum lists
 │       │   ├── schema-registry.js         8 content types: specs, defaults, rules
-│       │   ├── render-pipeline.js         debounce, sequence guard, validate to render
+│       │   ├── render-pipeline.js         debounce, one attempt at a time, capacity meter
 │       │   └── export-service.js          high-res render, file save, clipboard
 │       ├── qr/
 │       │   ├── tables.js                  EC block table, alignment coords, version info
@@ -98,6 +98,7 @@ Status: implemented. Every path listed here exists and is checked by
     ├── e2e/
     │   ├── browser.test.js                scenario suite over the browser matrix
     │   ├── decode-round-trip.test.js      rendered PNGs decoded by the independent tool
+    │   ├── dialogs.test.js                menu and About dialog close by outside click
     │   └── responsive.test.js             pane switch checked at 767 px and 768 px
     └── tools/
         └── decoder/
@@ -124,6 +125,7 @@ Test runs write generated dumps and PNGs to `tests/artifacts/`, which is ignored
 | Menu and About dialog | `src/js/ui/dialogs.js` |
 | Feedback surface | `src/js/ui/toasts.js` |
 | Field error surface | `src/js/ui/form-renderer.js`, `src/css/states.css` |
+| Capacity meter | `src/index.html`, `src/js/ui/form-renderer.js`, `src/css/components.css` |
 | Control bindings | `src/js/ui/bindings.js` |
 | Dialog controller | `src/js/ui/dialogs.js` |
 | View switcher | `src/js/ui/tabs.js` |
@@ -252,8 +254,10 @@ imports a UI module.
   its commands and never assign to state fields, which keeps writes serialised
   in one module. Derived writes that must not re-trigger a render, such as the
   last valid export payload, go through a dedicated store method.
-- The render pipeline carries a sequence number per attempt so a slow encode
-  cannot overwrite a newer preview.
+- The render pipeline runs one attempt at a time: `renderNow()` encodes and
+  paints before it returns, so an older attempt cannot overtake a newer one. No
+  ordering marker is carried while encoding and painting stay synchronous.
+  `tests/unit/render-pipeline.test.js` pins the one-result-per-attempt order.
 - Tests run on Node's built-in test runner. Playwright is used as a library, not
   as a test framework, because the matrix needs plain Firefox and WebKit
   contexts rather than Playwright Test projects, and the matrix is data-driven
@@ -288,7 +292,9 @@ imports a UI module.
 | Content type coverage | `tests/e2e/decode-round-trip.test.js`, `tests/unit/schema-registry.test.js` |
 | Default-state guarantee | `tests/e2e/browser.test.js` |
 | Error boundaries | `tests/e2e/browser.test.js`, `tests/unit/qr-encoder.test.js`, `tests/unit/state-store.test.js` |
-| Interaction coverage | `tests/e2e/browser.test.js`, `tests/unit/export-service.test.js` |
+| Capacity limit shown | `tests/unit/render-pipeline.test.js`, `tests/e2e/browser.test.js` |
+| One render attempt at a time | `tests/unit/render-pipeline.test.js` |
+| Interaction coverage | `tests/e2e/browser.test.js`, `tests/e2e/dialogs.test.js`, `tests/unit/export-service.test.js` |
 | Zero dependency proof | `tests/unit/dependency-free.test.js` |
 | Browser and viewport matrix | `tests/helpers/browser-matrix.js` |
 | Responsive pane switch at 768 px | `tests/e2e/responsive.test.js` |

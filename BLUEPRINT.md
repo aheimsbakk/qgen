@@ -56,6 +56,7 @@ Each component belongs to exactly one layer. No component mixes layers.
 | Menu and About dialog | Header menu, dropdown, modal dialog. |
 | Feedback surface | Toast area. |
 | Field error surface | Inline error text bound to each field. |
+| Capacity meter | Payload length for the current form, and the largest payload one code holds at the level in use. |
 
 ### 2.2 Input layer
 
@@ -123,11 +124,15 @@ Each component belongs to exactly one layer. No component mixes layers.
 10. The pipeline stores the payload as the last valid result.
 11. Export re-encodes the last valid payload at the requested pixel size.
 
+Every attempt also reports the capacity meter: the payload length and the
+largest payload one code holds at the level in use.
+
 ### 3.2 Ordering guarantee
 
-Each render attempt carries a sequence number. A completed render with an older
-sequence number must be discarded. This prevents a slow render from overwriting
-a newer one when the user types quickly.
+One render attempt runs at a time. An attempt finishes validation, encoding,
+and painting before the next attempt starts, so no attempt can be overtaken by
+a newer one and a stale result can never replace a newer result. The pipeline
+reports exactly one result per attempt, in attempt order.
 
 ### 3.3 Debounce rule
 
@@ -258,8 +263,10 @@ The limit cannot be extended inside one QR code. Larger content requires either
 a lower error correction level, several separate codes, or a different symbology.
 Multi-code output is out of scope for v0.1.
 
-The app must show the effective limit for the current level, count the current
-payload, and refuse to encode when the payload exceeds it.
+The capacity meter shows the current payload length and the effective limit for
+the level in use. It updates on every attempt, including an attempt whose
+payload is too large. The pipeline refuses to encode when the payload exceeds
+the limit and names the limit in the message.
 
 ---
 
@@ -308,7 +315,7 @@ No silent failure. No empty catch.
 |---|---|
 | Required field missing | Inline error on that field, preview dimmed, last valid image kept. |
 | Out-of-range number | Inline error on that field. |
-| Payload over capacity | Preview error state with the limit for the current error level. |
+| Payload over capacity | Preview error state with the limit for the current error level, and the capacity meter marked as over its limit. |
 | Uploaded image cannot be read | Error toast, overlay unchanged. |
 | Clipboard unavailable or denied | Error toast naming the cause. |
 | No valid payload to export | Error toast telling the user to fill the fields first. |
@@ -405,6 +412,7 @@ Concrete tools are recorded in `CODEBASE.md`.
 | Save PNG and copy | Export service |
 | Always valid defaults | Schema registry defaults + state store |
 | Clear errors | Error boundaries + feedback surface |
+| Capacity limit shown | Render pipeline + capacity meter |
 | Mobile and desktop layout | App shell + view switcher |
 | Accessibility | Presentation layer + dialog controller |
 | Encoder correctness | QR symbol engine + verification tooling |
