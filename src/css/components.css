@@ -63,6 +63,18 @@
   font-size: var(--font-size-small);
 }
 
+/* Capacity line under the field form. Reads as a note until the payload
+   passes the limit, then it takes the danger colour. */
+.payload-meter {
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+}
+
+.payload-meter.is-over {
+  color: var(--color-danger);
+}
+
 .button {
   min-height: var(--touch-target);
   padding: var(--space-2) var(--space-4);

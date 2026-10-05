@@ -62,6 +62,7 @@ export function startApplication({ canvas: canvasOverride } = {}) {
     onResult: (result) => {
       form.clearErrors();
       if (result.status === 'invalid') form.showErrors(result.errors);
+      form.showMeter(result.meter);
       previewStates.apply(result);
       store.setUi('preview_status', result.status);
     }
@@ -80,6 +81,7 @@ export function startApplication({ canvas: canvasOverride } = {}) {
   const bindings = new Bindings({ elements, store, exportService, toasts });
   form = new FormRenderer({
     container: elements.formContainer,
+    meterElement: elements.payloadMeter,
     onFieldChange: (key, value) => bindings.handleFieldChange(key, value)
   });
 

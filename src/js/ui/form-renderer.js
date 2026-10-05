@@ -1,6 +1,7 @@
 /**
- * Dynamic field form. Builds the controls for the selected content type and
- * links each error message to the field it belongs to.
+ * Dynamic field form. Builds the controls for the selected content type,
+ * links each error message to the field it belongs to, and words the capacity
+ * line that sits under the fields.
  */
 
 const INPUT_TYPE_BY_KIND = {
@@ -12,14 +13,17 @@ const INPUT_TYPE_BY_KIND = {
   password: 'password'
 };
 
-/** Field form builder and error surface. */
+/** Field form builder, error surface, and capacity line. */
 export class FormRenderer {
   /**
-   * @param {{container: HTMLElement, onFieldChange: Function}} deps
+   * @param {{container: HTMLElement, onFieldChange: Function, meterElement?: HTMLElement}} deps
+   *   `meterElement` is the paragraph under the fields that carries the
+   *   capacity line. Omit it to leave the capacity line unmanaged.
    */
-  constructor({ container, onFieldChange }) {
+  constructor({ container, onFieldChange, meterElement = null }) {
     this.container = container;
     this.onFieldChange = onFieldChange;
+    this.meterElement = meterElement;
     this.renderedSchemaId = null;
     this.errorNodes = new Map();
   }
@@ -145,5 +149,27 @@ export class FormRenderer {
       entry.error.hidden = false;
       entry.input.setAttribute('aria-invalid', 'true');
     }
+  }
+
+  /**
+   * Write the capacity line under the fields. The pipeline supplies the
+   * numbers; this method only words them.
+   * @param {{chars: number, limit: number, level: string}|null} meter
+   *   Null when no payload can be built, which clears the line.
+   */
+  showMeter(meter) {
+    if (!this.meterElement) return;
+
+    if (!meter) {
+      this.meterElement.textContent = '';
+      this.meterElement.classList.remove('is-over');
+      return;
+    }
+
+    const overLimit = meter.chars > meter.limit;
+    this.meterElement.textContent = overLimit
+      ? `Payload: ${meter.chars} characters. One QR code at level ${meter.level} holds ${meter.limit} at most.`
+      : `Payload: ${meter.chars} characters. One QR code at level ${meter.level} holds ${meter.limit}.`;
+    this.meterElement.classList.toggle('is-over', overLimit);
   }
 }

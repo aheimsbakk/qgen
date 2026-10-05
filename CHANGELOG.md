@@ -1,5 +1,41 @@
 # Changelog
 
+## [0.4.0] - 2026-10-05
+
+- **why:** Show the payload limit before the user hits it, drop a guard that
+  could never fire, and cover the dialog close paths no test reached
+- **model:** kompis/qwen3.8-flash-next-iq3_s
+- **tags:** qgen, capacity, overlay, testing
+
+### Added
+
+- `src/index.html`, `src/js/ui/form-renderer.js`, `src/css/components.css`: a
+  capacity line under the field form shows the payload length and the largest
+  payload one code holds at the level in use. It takes the danger colour when
+  the payload passes the limit.
+- `payloadMeter()` in `src/js/core/render-pipeline.js`: reports `chars`,
+  `limit`, `level`, and `mode` on every attempt, including one that fails.
+  `tests/unit/render-pipeline.test.js` pins the numbers and the order of
+  results the interface sees.
+- `tests/e2e/dialogs.test.js`: eight checks that the About dialog closes on a
+  backdrop click and the menu closes on a click outside it, in Firefox and
+  WebKit at desktop and phone widths. Neither path had a test.
+
+### Changed
+
+- `BLUEPRINT.md` §3.2: the ordering guarantee now says one attempt runs at a
+  time, which is what the code does. It described a sequence number the
+  pipeline never used.
+
+### Fixed
+
+- `src/js/core/render-pipeline.js`: removed the sequence guard, `lastResult`,
+  and `lastSymbol`. `renderNow()` encodes and paints before it returns, so the
+  check could never be true.
+- `src/index.html`: the Centre size slider now steps by 1%, the value
+  `BLUEPRINT.md` §4.2 states. It stepped by 5%, and the browser snapped any
+  value set on it to the nearest 5%.
+
 ## [0.3.0] - 2026-10-05
 
 - **why:** Put export next to the code it exports, and make the layout match the blueprint

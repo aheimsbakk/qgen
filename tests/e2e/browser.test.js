@@ -156,6 +156,40 @@ const SCENARIOS = [
     }
   },
   {
+    name: 'the capacity line counts the payload and its limit',
+    async run(page) {
+      assert.equal(
+        await page.textContent('#payloadMeter'),
+        'Payload: 19 characters. One QR code at level M holds 2331.'
+      );
+
+      await page.fill('#field-url', `https://example.com/${'x'.repeat(2400)}`);
+      await page.waitForTimeout(300);
+
+      assert.match(await page.textContent('#payloadMeter'), /^Payload: \d{4,} characters\./);
+      assert.equal(await page.getAttribute('#payloadMeter', 'class'), 'payload-meter is-over');
+      assert.match(await page.textContent('#qrErrorText'), /holds at most 2331/);
+    }
+  },
+  {
+    name: 'the centre size slider moves in one percent steps',
+    async run(page) {
+      assert.equal(await page.getAttribute('#overlaySizeInput', 'step'), '0.01');
+
+      await page.selectOption('#overlayKindSelect', 'emoji');
+      await page.fill('#overlayEmojiInput', '+');
+      await page.evaluate(() => {
+        const slider = document.getElementById('overlaySizeInput');
+        slider.value = '0.21';
+        slider.dispatchEvent(new Event('input'));
+      });
+      await page.waitForTimeout(300);
+
+      // A coarser step makes the browser snap 0.21 back to the nearest notch.
+      assert.equal(await page.textContent('#overlaySizeValue'), '21%');
+    }
+  },
+  {
     name: 'the about dialog opens and closes',
     async run(page) {
       await page.click('#menuButton');

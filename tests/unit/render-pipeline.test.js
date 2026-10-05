@@ -85,6 +85,59 @@ test('an overlay raises the error correction level to H', () => {
   assert.equal(overlayWithoutContent, 'M');
 });
 
+test('the meter counts the payload and names the limit for the level', () => {
+  const { pipeline } = harness();
+  const result = pipeline.renderNow();
+
+  assert.equal(result.meter.chars, 19);
+  assert.equal(result.meter.level, 'M');
+  assert.equal(result.meter.mode, 'byte');
+  assert.equal(result.meter.limit, 2331);
+});
+
+test('the meter follows the level an overlay forces', () => {
+  const { store, pipeline } = harness();
+  store.setStyle('overlay.kind', 'emoji');
+  store.setStyle('overlay.content', '+');
+
+  const result = pipeline.renderNow();
+  assert.equal(result.meter.level, 'H');
+  assert.equal(result.meter.limit, 1273);
+});
+
+test('the meter counts a payload that cannot fit and passes its limit', () => {
+  const { store, pipeline } = harness();
+  store.setField('url', `https://example.com/${'x'.repeat(2400)}`);
+
+  const result = pipeline.renderNow();
+  assert.equal(result.status, 'error');
+  assert.ok(result.meter.chars > result.meter.limit, 'the meter must show the overrun');
+  assert.equal(result.meter.limit, 2331);
+});
+
+test('the meter counts a form that still carries a field error', () => {
+  const { store, pipeline } = harness();
+  store.setSchemaType('geo');
+  store.setField('lat', '95');
+
+  const result = pipeline.renderNow();
+  assert.equal(result.status, 'invalid');
+  assert.equal(result.meter.chars, 'geo:95,10.7522'.length);
+});
+
+test('the interface sees one result per attempt with the newest last', () => {
+  const { store, pipeline, paints, results } = harness();
+
+  store.setField('url', 'https://example.com/first');
+  const first = pipeline.renderNow();
+  store.setField('url', 'https://example.com/second');
+  const second = pipeline.renderNow();
+
+  assert.deepEqual(results.map((result) => result.payload), [first.payload, second.payload]);
+  assert.equal(paints.length, 2);
+  assert.equal(store.getState().export.last_valid_payload, 'https://example.com/second');
+});
+
 test('rapid changes produce one render, not one per keystroke', async () => {
   const { store, pipeline, paints } = harness();
 

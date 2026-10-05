@@ -6,6 +6,7 @@
 const ELEMENT_IDS = {
   schemaSelect: 'schemaTypeSelect',
   formContainer: 'dynamicFormContainer',
+  payloadMeter: 'payloadMeter',
 
   shapeSelect: 'moduleShapeSelect',
   dotScaleField: 'dotScaleField',
