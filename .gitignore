@@ -1,1 +1,17 @@
+# Reference proof of concept, kept on disk for comparison only.
 tmp
+
+# Test and tooling artifacts
+node_modules/
+test-results/
+playwright-report/
+tests/artifacts/
+
+# Python environments and caches
+.venv/
+__pycache__/
+*.pyc
+
+# Local environment and scratch files
+.env
+.qa-error.log
