@@ -11,6 +11,7 @@ tests/artifacts/
 .venv/
 __pycache__/
 *.pyc
+.ruff_cache/
 
 # Local environment and scratch files
 .env
