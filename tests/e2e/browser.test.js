@@ -143,6 +143,17 @@ const SCENARIOS = [
       assert.notEqual(await previewPng(page), bars, 'module size did not change the drawing');
 
       assert.match(await page.textContent('#symbolInfo'), /Version \d+/);
+
+      // BLUEPRINT.md section 4.2 declares a 0.10 step for dot_scale, so finer
+      // notches must not be reachable. The browser snaps an off-grid value back
+      // to the nearest allowed one before any handler sees it.
+      assert.equal(Number(await page.getAttribute('#dotScaleInput', 'step')), 0.1);
+      await page.evaluate(() => {
+        const slider = document.getElementById('dotScaleInput');
+        slider.value = '0.14';
+        slider.dispatchEvent(new Event('input'));
+      });
+      assert.equal(await page.inputValue('#dotScaleInput'), '0.1');
     }
   },
   {

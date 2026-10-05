@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.4.1] - 2026-10-05
+
+- **why:** The Module size slider offered finer settings than the blueprint
+  declares, so the interface and the specification disagreed
+- **model:** kompis/qwen3.8-flash-next-iq3_s
+- **tags:** qgen, slider, testing
+
+### Fixed
+
+- `src/index.html`: the Module size slider now steps by 0.1, the value
+  `BLUEPRINT.md` §4.2 declares. It stepped by 0.05, so it offered settings the
+  state tree does not allow.
+- `tests/e2e/browser.test.js`: the shape scenario reads the slider's `step` and
+  checks that an off-grid value such as 0.14 snaps back to 0.1.
+
 ## [0.4.0] - 2026-10-05
 
 - **why:** Show the payload limit before the user hits it, drop a guard that
