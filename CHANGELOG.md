@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.6.1] - 2026-10-07
+
+- **why:** The README led with developer commands, so a visitor looking for
+  the app had to dig. The site also moved to a custom domain
+- **model:** kompis/qwen3.8-flash-next-iq3_s
+- **tags:** docs, readme, deployment
+
+### Changed
+
+- `README.md`: user content leads — live link (<https://sanntid.org/qgen/>),
+  what the app does, a three-step start, behaviour, privacy, and the limit of
+  one QR code. The developer and script reference moved below under "For
+  developers", since `RULES.md` #24 keeps script docs in this file.
+- `README.md`: the deploy section names the custom domain instead of the
+  `github.io` host.
+- `CODEBASE.md`: the README annotation matches the new order.
+
 ## [0.6.0] - 2026-10-07
 
 - **why:** Picking the Emoji centre image left the Symbol field empty, so the

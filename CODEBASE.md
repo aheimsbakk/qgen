@@ -30,7 +30,7 @@ Status: implemented. Every path listed here exists and is checked by
 ├── BLUEPRINT.md
 ├── CHANGELOG.md                           version history, Keep a Changelog format
 ├── CODEBASE.md
-├── README.md                              script usage, how to run app and tests
+├── README.md                              user guide first, then developer and script reference
 ├── VERSION                                MAJOR.MINOR.PATCH
 ├── .gitignore                             test artifacts, Python env, node_modules
 ├── .github/

@@ -1,9 +1,58 @@
 # QGen
 
-QGen is a browser QR code generator. It runs as static files, loads nothing from
-outside the project, and needs no account, server, or API key.
+QGen makes QR code images in your browser. The page loads nothing from outside
+itself and sends nothing anywhere.
 
-Version: see `VERSION`. Architecture: `BLUEPRINT.md`. File map: `CODEBASE.md`.
+Use it here: <https://sanntid.org/qgen/>. Free, no account, nothing to install.
+
+## What you can do
+
+- Make codes for website links, plain text, Wi-Fi networks, contact cards,
+  email messages, phone numbers, text messages, and map locations.
+- Choose the look: five module shapes, your own colours, and an emoji or your
+  own image in the centre.
+- Save a PNG file or copy the image at 256, 512, 1024, or 2048 pixels.
+- Use it on a phone or a computer. The layout follows the screen size.
+
+## Start in three steps
+
+1. Open <https://sanntid.org/qgen/>. A working example code appears.
+2. Pick a content type and fill in the fields. The picture follows what you
+   type.
+3. Pick an image size and press **Save PNG** or **Copy image**. The file is
+   named after the content type, for example `url-qr.png`.
+
+## How it behaves
+
+- Every content type starts with an example, so you see a real, scannable
+  code before you type. Switching type keeps an example ready.
+- A line under the fields counts your characters and shows the most one QR
+  code can hold. If you pass the limit, the page says so instead of failing.
+- The centre image field starts with a smiley so you can see what it does.
+  Replace or remove it freely.
+- Adding a centre image switches the code to its toughest error-correction
+  level, so it stays scannable under the picture.
+- Save and copy use the last complete code. An unfinished edit cannot change
+  the file you export.
+
+## Your privacy
+
+- The page makes no network requests while you use it.
+- No cookies, no accounts, no storage, no analytics.
+- An image you upload for the centre stays in memory and is never sent.
+
+## The limit of one QR code
+
+A single QR code holds at most 2953 bytes of text, or 1273 bytes with a centre
+image. Longer content needs a lower error-correction level, several codes, or
+a different kind of code. The page names the limit when you pass it.
+
+---
+
+# For developers
+
+The app is plain HTML, CSS, and JavaScript: no build step, no dependencies.
+Design: `BLUEPRINT.md`. File map: `CODEBASE.md`. Version: `VERSION`.
 
 ## What exists now
 
@@ -90,7 +139,8 @@ One-time setup in the repository: open **Settings → Pages**, set **Source** to
 **GitHub Actions**. Then every push to `main` publishes the site, and you can
 also run the workflow by hand from the Actions tab.
 
-Live site: <https://aheimsbakk.github.io/qgen/>.
+Live site: <https://sanntid.org/qgen/>, a custom domain in front of the Pages
+site.
 
 The workflow does not run the test suites. Run them locally before pushing.
 
@@ -151,4 +201,5 @@ values.
 ## Contributing
 
 Follow the order in `AGENTS.md`: architecture, implementation, testing,
-synchronization, then wrap-up. Commits use Conventional Commits.
+synchronization, then wrap-up. Commits use Conventional Commits. Report
+problems through the repository issue tracker.
