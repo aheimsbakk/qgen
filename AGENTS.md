@@ -6,7 +6,7 @@
 - **Workflow:** architecture -> implementation -> testing -> synchronization -> zero problems -> wrap-up
 
 ## General Constraints
-- **CI/CD:** No `.github` workflows.
+- **CI/CD:** Only the GitHub Pages deploy workflow `.github/workflows/deploy-pages.yml`. No test, build, or release workflows.
 - **Commits:** Conventional Commits (`<type>(<scope>): <summary>`). Use `docs(sync):` for documentation updates.
 
 ## Blueprint Generation (Architecture)

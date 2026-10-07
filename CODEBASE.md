@@ -14,6 +14,7 @@ Status: implemented. Every path listed here exists and is checked by
 |---|---|---|
 | Application | `src/` | Yes |
 | Test and verification tooling | `tests/`, `scripts/` | No |
+| Deployment workflow | `.github/workflows/` | No, runs on GitHub runners |
 | Reference proof of concept | `/work/tmp/qgen_qr_code_generator.html` | No, read-only reference |
 | Documentation | `BLUEPRINT.md`, `CODEBASE.md`, `README.md`, `docs/memory/` | No |
 
@@ -32,6 +33,9 @@ Status: implemented. Every path listed here exists and is checked by
 ├── README.md                              script usage, how to run app and tests
 ├── VERSION                                MAJOR.MINOR.PATCH
 ├── .gitignore                             test artifacts, Python env, node_modules
+├── .github/
+│   └── workflows/
+│       └── deploy-pages.yml               publishes src/ to GitHub Pages on push to main
 ├── docs/
 │   └── memory/                            session decisions and index
 ├── scripts/
@@ -180,7 +184,7 @@ Test runs write generated dumps and PNGs to `tests/artifacts/`, which is ignored
 | Decoder toolchain | Python managed by `uv`, pinned `opencv-python-headless==4.11.0.86`, `numpy` supplied by OpenCV |
 | Fixture server | Node built-in `http` module, no dependency |
 | Version control | Conventional Commits, `docs(sync):` for documentation |
-| CI/CD | None. No `.github` directory |
+| CI/CD | GitHub Pages deploy only: `.github/workflows/deploy-pages.yml`. No test or build workflows |
 
 ### File size budget
 
@@ -215,6 +219,7 @@ lines and a split at 300 lines. Budgets in force:
 | Sync verification | `scripts/verify_codebase_sync.sh`, run as `scripts/verify_codebase_sync.sh` |
 | Version bump | `scripts/bump-version.sh`, run as `scripts/bump-version.sh [patch\|minor\|major]` |
 | Changelog check | `scripts/validate-changelog.sh`, run as `scripts/validate-changelog.sh` |
+| Pages deploy | `.github/workflows/deploy-pages.yml`, triggered by push to `main` or manual run |
 
 ### Import graph
 
