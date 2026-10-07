@@ -22,6 +22,10 @@ export const OVERLAY_KINDS = ['none', 'emoji', 'image'];
 export const MOBILE_VIEWS = ['settings', 'preview'];
 export const PREVIEW_STATUSES = ['ready', 'empty', 'invalid', 'error'];
 
+// Fills the Symbol field when the user switches to the emoji kind, so the
+// preview shows a working example they can edit instead of an empty field.
+export const OVERLAY_EMOJI_EXAMPLE = '\u{1F642}';
+
 export const NUMBER_LIMITS = {
   dot_scale: { min: 0.1, max: 1.0 },
   'overlay.size_ratio': { min: 0.1, max: 0.35 },

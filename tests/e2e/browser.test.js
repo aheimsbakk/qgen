@@ -160,6 +160,8 @@ const SCENARIOS = [
     name: 'an overlay raises the error level to H',
     async run(page) {
       await page.selectOption('#overlayKindSelect', 'emoji');
+      // The Symbol field starts with the smiley example the store fills in.
+      assert.equal(await page.inputValue('#overlayEmojiInput'), '\u{1F642}');
       await page.fill('#overlayEmojiInput', '+');
       await page.waitForTimeout(300);
 

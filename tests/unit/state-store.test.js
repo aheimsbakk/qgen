@@ -66,9 +66,12 @@ test('enum settings reject values outside the allowed set', () => {
   assert.throws(() => store.setUi('menu_open', 'yes'), ValidationError);
 });
 
-test('changing the overlay kind clears content left from the previous kind', () => {
+test('changing the overlay kind fills the emoji example or clears content', () => {
   const store = new StateStore();
   store.setStyle('overlay.kind', 'emoji');
+  // The example symbol, U+1F642 slightly smiling face.
+  assert.equal(store.getState().style.overlay.content, '\u{1F642}');
+
   store.setStyle('overlay.content', '+');
   assert.equal(store.getState().style.overlay.content, '+');
 

@@ -12,6 +12,7 @@ import {
   MODULE_SHAPES,
   MOBILE_VIEWS,
   NUMBER_LIMITS,
+  OVERLAY_EMOJI_EXAMPLE,
   OVERLAY_KINDS,
   PREVIEW_STATUSES,
   ValidationError,
@@ -135,8 +136,11 @@ export class StateStore {
     if (target[key] === next) return;
 
     target[key] = next;
-    // Content from a previous kind is meaningless for the new one.
-    if (key === 'kind') target.content = null;
+    // Content from a previous kind is meaningless for the new one. The emoji
+    // kind starts with an example symbol so the preview shows something to edit.
+    if (key === 'kind') {
+      target.content = next === 'emoji' ? OVERLAY_EMOJI_EXAMPLE : null;
+    }
     this.notify();
   }
 

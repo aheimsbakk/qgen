@@ -45,6 +45,16 @@ export class PanelSync {
     this.elements.overlaySharedField.hidden = !hasOverlay;
     this.elements.overlayTextColorField.hidden = overlay.kind !== 'emoji';
 
+    // Show the store's symbol, such as the smiley example set on a kind
+    // switch. Skip the write when the field already matches: re-assigning the
+    // same string resets the caret, which would fight the user while typing.
+    if (overlay.kind === 'emoji') {
+      const symbol = typeof overlay.content === 'string' ? overlay.content : '';
+      if (this.elements.overlayEmojiInput.value !== symbol) {
+        this.elements.overlayEmojiInput.value = symbol;
+      }
+    }
+
     this.elements.overlayBackingColorInput.value = overlay.color_bg;
     this.elements.overlayTextColorInput.value = overlay.color_fg;
     this.elements.overlayTransparentInput.checked = overlay.transparent_bg;

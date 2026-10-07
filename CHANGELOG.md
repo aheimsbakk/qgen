@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.6.0] - 2026-10-07
+
+- **why:** Picking the Emoji centre image left the Symbol field empty, so the
+  user saw no example of what the control does
+- **model:** kompis/qwen3.8-flash-next-iq3_s
+- **tags:** qgen, overlay, emoji, defaults
+
+### Added
+
+- `OVERLAY_EMOJI_EXAMPLE` in `src/js/core/state-rules.js`: the smiley
+  (U+1F642) that fills the Symbol field.
+- `tests/e2e/browser.test.js`: the overlay scenario checks that the Symbol
+  field shows the smiley after the kind switches to Emoji.
+
+### Changed
+
+- `src/js/core/state-store.js`: switching the overlay kind to `emoji` now
+  fills the smiley example. Switching to `none` or `image` still clears
+  content.
+- `src/js/ui/panel-sync.js`: the Symbol field mirrors the store's symbol.
+  Writes that match the field are skipped, so the caret stays put while the
+  user types.
+- `src/index.html`: the Symbol placeholder now reads "For example: 🙂".
+
 ## [0.5.0] - 2026-10-07
 
 - **why:** A push to `main` should publish the site on its own, with no
