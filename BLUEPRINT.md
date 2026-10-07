@@ -163,7 +163,8 @@ app_state
     inherit_fg           boolean                            default true
     overlay
       kind               enum: none | emoji | image        default none
-      content            string | image handle | null      default null
+      content            string | image handle | null      default null;
+                         switching to emoji fills a smiley example
       color_bg           hex color                          default #FFFFFF
       color_fg           hex color                          default #000000
       transparent_bg     boolean                            default false
@@ -183,7 +184,9 @@ app_state
 - Numbers outside range are clamped to the nearest bound.
 - Colour values must be six-digit hexadecimal. Reject anything else and report it.
 - Enum values must exist in the declared set. Reject anything else and report it.
-- Overlay content is cleared when the overlay kind changes.
+- Overlay content is cleared when the overlay kind changes. Switching to the
+  emoji kind instead fills a smiley example, so the user sees a working symbol
+  they can edit.
 - Eye colour is ignored while inherit foreground colour is true.
 
 ### 4.4 Persistence
