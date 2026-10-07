@@ -13,3 +13,4 @@
 | Render pipeline runs one attempt at a time, no sequence guard | decision | medium | qgen, render-pipeline, ordering, synchronous | | archive/2026-10-05-render-pipeline-one-attempt.md |
 | Range slider step must match the blueprint state tree | warning | medium | qgen, range-input, html, blueprint-drift | | archive/2026-10-05-range-step-must-match-blueprint.md |
 | GitHub Pages deploy workflow replaces the no-CI rule | decision | high | ci-cd, github-pages, deployment, actions | | archive/2026-10-07-github-pages-deploy-workflow.md |
+| QGen lives at https://sanntid.org/qgen/ | fact | medium | deployment, url, github-pages, docs | | archive/2026-10-07-qgen-live-url-sanntid-org.md |
