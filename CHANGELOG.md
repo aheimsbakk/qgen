@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.5.0] - 2026-10-07
+
+- **why:** A push to `main` should publish the site on its own, with no
+  manual deploy step
+- **model:** kompis/qwen3.8-flash-next-iq3_s
+- **tags:** ci-cd, github-pages, deployment
+
+### Added
+
+- `.github/workflows/deploy-pages.yml`: on a push to `main` or a manual run,
+  uploads `src/` as the Pages artifact and deploys it. The app needs no build
+  step, so the folder ships as-is. Actions carry explicit versions:
+  checkout v7.0.1, upload-pages-artifact v5.0.0, deploy-pages v5.0.1.
+- `README.md`: a "Deploy to GitHub Pages" section covers the one-time Pages
+  source setting and the site address.
+
+### Changed
+
+- `AGENTS.md`: the CI/CD rule now allows one workflow, the Pages deploy.
+- `CODEBASE.md`: the tree, delivery boundary, specifications, and entry
+  points list the workflow.
+- `scripts/verify_codebase_sync.sh`: also checks `.github/` paths named in
+  `CODEBASE.md`.
+
 ## [0.4.1] - 2026-10-05
 
 - **why:** The Module size slider offered finer settings than the blueprint

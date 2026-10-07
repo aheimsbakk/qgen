@@ -10,6 +10,7 @@ Version: see `VERSION`. Architecture: `BLUEPRINT.md`. File map: `CODEBASE.md`.
 - `src/` — the delivered application: HTML, CSS, and dependency-free JavaScript.
 - `tests/` — unit tests, browser tests, and an independent QR decode tool.
 - `scripts/` — version, changelog, and codebase-sync tooling.
+- `.github/workflows/` — the GitHub Pages deploy workflow.
 - `docs/memory/` — recorded decisions for this project.
 - `tmp/` — the original proof of concept, kept for reference and ignored by
   Git. Do not edit it.
@@ -80,6 +81,19 @@ uv run --project tools/decoder tools/decoder/decode_png.py artifacts/browser-fir
 `uv.lock` holds the pinned versions. Generated dumps and PNGs land in
 `tests/artifacts/`, which Git ignores.
 
+## Deploy to GitHub Pages
+
+`.github/workflows/deploy-pages.yml` publishes `src/` as-is. The app has no
+build step, so the workflow uploads the folder and deploys it in one job.
+
+One-time setup in the repository: open **Settings → Pages**, set **Source** to
+**GitHub Actions**. Then every push to `main` publishes the site, and you can
+also run the workflow by hand from the Actions tab.
+
+Live site: <https://aheimsbakk.github.io/qgen/>.
+
+The workflow does not run the test suites. Run them locally before pushing.
+
 ## Scripts
 
 ### scripts/bump-version.sh
@@ -109,8 +123,8 @@ Exit code 0 means the changelog is valid. Any other code means a check failed.
 
 ### scripts/verify_codebase_sync.sh
 
-Checks that every `src/`, `tests/`, `scripts/`, or `docs/` path named in
-`CODEBASE.md` exists on disk. Run it after any change that moves files.
+Checks that every `.github/`, `src/`, `tests/`, `scripts/`, or `docs/` path
+named in `CODEBASE.md` exists on disk. Run it after any change that moves files.
 
 ```bash
 scripts/verify_codebase_sync.sh

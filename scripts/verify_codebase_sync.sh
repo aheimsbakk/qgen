@@ -16,7 +16,7 @@ fi
 IGNORE_PATTERN='^(node_modules/|tests/artifacts/|test-results/|playwright-report/|\.venv/|__pycache__/)'
 
 paths="$(
-	grep -oE '(src|tests|scripts|docs)/[A-Za-z0-9_./-]+' "$MAP" |
+	grep -oE '(\.github|src|tests|scripts|docs)/[A-Za-z0-9_./-]+' "$MAP" |
 		sed 's/[.,;:)]*$//' |
 		sort -u
 )"

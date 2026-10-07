@@ -1,0 +1,43 @@
+# Publishes the app to GitHub Pages. The app has no build step: the files in
+# src/ are the delivered artifact, so the artifact path is src/ itself.
+# Every asset reference in src/index.html is relative, so the site works under
+# the project-page path /qgen/ without a base-path rewrite, which is why
+# actions/configure-pages is not needed here.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Least privilege: only the deploy step needs Pages and OIDC permissions.
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v7.0.1
+
+      - name: Upload src/ as the Pages artifact
+        uses: actions/upload-pages-artifact@v5.0.0
+        with:
+          path: src
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5.0.1
