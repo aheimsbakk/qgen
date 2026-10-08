@@ -26,7 +26,8 @@ and dependency choices are recorded in `CODEBASE.md`.
 ### Product identity
 
 - Name: **QGen**.
-- About text: created by Arnulf Heimsbakk, link `https://sanntid.org`.
+- About text: created by Arnulf Heimsbakk. Links: homepage `https://sanntid.org`,
+  source `https://github.com/aheimsbakk/qgen`.
 
 ### Non-goals for v0.1
 

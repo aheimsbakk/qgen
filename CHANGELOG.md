@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.6.2] - 2026-10-08
+
+- **why:** The About box named the author and homepage only, so readers had no
+  link to the source. Both links were plain text or a single anchor.
+- **model:** kompis/qwen3.8-flash-next-iq3_s
+- **tags:** qgen, about, links
+
+### Changed
+
+- `src/index.html`: the About dialog now shows the homepage
+  (<https://sanntid.org>) and the source repository
+  (<https://github.com/aheimsbakk/qgen>) as clickable links with
+  `rel="noopener"`.
+- `BLUEPRINT.md`: the product identity line records both links.
+
 ## [0.6.1] - 2026-10-07
 
 - **why:** The README led with developer commands, so a visitor looking for
