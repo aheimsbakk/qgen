@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.6.3] - 2026-10-08
+
+- **why:** The About credit ran onto one line, because HTML collapses the
+  source newlines between the sentences.
+- **model:** kompis/qwen3.8-flash-next-iq3_s
+- **tags:** qgen, about, formatting
+
+### Fixed
+
+- `src/index.html`: the About credit now breaks onto three lines — author,
+  homepage, and source — with `<br>` between them.
+
 ## [0.6.2] - 2026-10-08
 
 - **why:** The About box named the author and homepage only, so readers had no
